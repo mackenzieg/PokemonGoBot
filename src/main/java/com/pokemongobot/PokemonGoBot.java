@@ -1,16 +1,19 @@
 package com.pokemongobot;
 
+import POGOProtos.Networking.Envelopes.SignatureOuterClass;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.device.DeviceInfo;
 import com.pokegoapi.auth.GoogleAutoCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokegoapi.util.SystemTimeImpl;
 import com.pokemongobot.tasks.BotManager;
 import okhttp3.OkHttpClient;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Random;
 import java.util.UUID;
 
@@ -30,7 +33,7 @@ public class PokemonGoBot {
         OkHttpClient client = new OkHttpClient();
         PokemonGo pokemonGo = null;
 
-        if(Config.isGoogle())
+        if (Config.isGoogle())
             googleAuthentication(client);
 
         pokemonGoBot = new BotProfile(pokemonGo,
@@ -40,18 +43,14 @@ public class PokemonGoBot {
     }
 
     public PokemonGo googleAuthentication(OkHttpClient client) {
+
         PokemonGo pokemonGo = null;
         GoogleAutoCredentialProvider googleCredentialProvider = null;
         try {
-            googleCredentialProvider = new GoogleAutoCredentialProvider(client, Config.getUsername(), Config.getPassword());
-        } catch (LoginFailedException e1) {
-            e1.printStackTrace();
-        } catch (RemoteServerException e1) {
-            e1.printStackTrace();
-        }
 
-        try {
-            pokemonGo = new com.pokegoapi.api.PokemonGo(googleCredentialProvider, client, new SystemTimeImpl());
+            googleCredentialProvider = new GoogleAutoCredentialProvider(client, Config.getUsername(), Config.getPassword());
+            pokemonGo = new PokemonGo(googleCredentialProvider, client);
+
         } catch (LoginFailedException e) {
             e.printStackTrace();
         } catch (RemoteServerException e) {
@@ -60,6 +59,7 @@ public class PokemonGoBot {
 
         String uuid = UUID.randomUUID().toString();
         Random random = new Random(uuid.hashCode());
+
 
 
         DeviceInfo deviceInfo = new DeviceInfo();
@@ -74,6 +74,16 @@ public class PokemonGoBot {
         deviceInfo.setFirmwareBrand("iPhone OS");
         deviceInfo.setFirmwareType(osVersions[random.nextInt(osVersions.length)]);
         pokemonGo.setDeviceInfo(deviceInfo);
+
+
+        try {
+            SignatureOuterClass.Signature.SensorInfo sensorInfo = SignatureOuterClass.Signature.SensorInfo.newBuilder().build();
+            Field field = sensorInfo.getClass().getField("angleNormalizedZ_");
+            field.setAccessible(true);
+            field.setInt(sensorInfo, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return pokemonGo;
 

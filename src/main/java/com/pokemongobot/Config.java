@@ -19,6 +19,8 @@ public class Config {
     private static int CP = 9999;
     private static boolean AutoDrop = false;
 
+    private static int CatchChanceUseRazzberry = 50;
+
     private static boolean Evolve = false;          // Use XP egg when evolving
     private static boolean XPEggEvolve = false;
     private static int MinEvolveUseXpEgg = 0;          // Minimum amount to evolve before popping XP egg
@@ -56,17 +58,9 @@ public class Config {
 
     public static void loadConfig(Properties config) throws IllegalAccessException {
         Field[] allFields = Config.class.getDeclaredFields();
-        String s = "";
-        for (Field allField : allFields) {
-            s += allField.getName() + "=";
-        }
-        System.out.println(s);
         for (Field field : allFields) {
             if(field.getType().isPrimitive()) {
                 if(field.getType().isAssignableFrom(int.class)) {
-                    System.out.println(field.getName());
-                    System.out.println(config.getProperty(field.getName()));
-                    System.out.println(field.getType().toString());
                     field.setInt(Config.class, Integer.parseInt(config.getProperty(field.getName())));
                 } else if(field.getType().isAssignableFrom(double.class)) {
                     field.setDouble(Config.class, Double.parseDouble(config.getProperty(field.getName())));
@@ -77,11 +71,6 @@ public class Config {
                 if(field.getType().isAssignableFrom(String.class)) {
                     field.set(Config.class, config.getProperty(field.getName()));
                 }
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -157,4 +146,9 @@ public class Config {
     public boolean isHandleSoftBan() {
         return HandleSoftBan;
     }
+
+    public static int getCatchChanceUseRazzberry() {
+        return CatchChanceUseRazzberry;
+    }
+
 }

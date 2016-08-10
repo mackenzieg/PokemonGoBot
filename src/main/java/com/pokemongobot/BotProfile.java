@@ -19,6 +19,7 @@ public class BotProfile {
         this.http = http;
         this.latitude.set(latitude);
         this.longitude.set(longitude);
+        pokemonGo.setLocation(latitude, longitude, 0);
     }
 
     public PokemonGo getPokemonGo() {

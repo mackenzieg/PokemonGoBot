@@ -23,6 +23,9 @@ IVOverCP=false
 IV=80
 CP=500
 
+# Any percentage chance or below bot will use razzberrry to catch
+CatchChanceUseRazzberry=50
+
 AutoDrop=true
 
 # Number of each item to keep
