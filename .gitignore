@@ -154,5 +154,3 @@ PokemonGoBot.iml
 src/main/resources/
 src/test/
 config.yml.example
-update.bat
-config.properties.example

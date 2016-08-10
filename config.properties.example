@@ -1,0 +1,50 @@
+# Config file for Pokemon Bot
+
+Google=true
+Username=GOOGLE_USERNAME
+Password=GOOGLE_PASSWORD
+
+# API key currently unused
+ApiKey: API_KEY
+
+# Current location is University of Waterloo in Canada
+Latitude=40.7127837
+Longitude=74.00594130000002
+
+# Unit is in m/s
+Speed=4
+
+Transfer=true
+
+# Treat IV stat over CP when choosing what pokemon to transfer
+IVOverCP=false
+
+# Percentage of perfect
+IV=80
+CP=500
+
+AutoDrop=true
+
+# Number of each item to keep
+Potion=0
+SuperPotion=10
+HyperPotion=50
+Revive=20
+Pokeball=10
+GreatBall=40
+UltraBall=50
+RazzBerry=150
+
+Evolve=true
+XPEggEvolve=false
+# Minimum amount of pokemon that need evolving to pop XP egg
+MinEvolveUseXpEgg=0
+
+# Try and unban player
+HandleSoftBan=false
+
+MaxRange=1000
+MaxTime=-1
+
+
+
