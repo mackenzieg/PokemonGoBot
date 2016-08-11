@@ -6,17 +6,15 @@ import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokemongobot.BotProfile;
 
-public abstract class Task {
+public class EvolvePokemon extends Task {
 
-    private BotProfile bot;
-
-    public Task(BotProfile bot) {
-        this.bot = bot;
+    public EvolvePokemon(BotProfile bot) {
+        super(bot);
     }
 
-    public abstract void run() throws LoginFailedException, RemoteServerException, NoSuchItemException, EncounterFailedException;
+    @Override
+    public void run() throws LoginFailedException, RemoteServerException, NoSuchItemException, EncounterFailedException {
 
-    public BotProfile getBot() {
-        return bot;
     }
+
 }

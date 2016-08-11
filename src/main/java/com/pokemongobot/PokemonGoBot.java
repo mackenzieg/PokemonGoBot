@@ -2,7 +2,6 @@ package com.pokemongobot;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.device.DeviceInfo;
-import com.pokegoapi.api.device.SensorInfo;
 import com.pokegoapi.auth.GoogleAutoCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
@@ -11,9 +10,6 @@ import com.pokemongobot.tasks.BotManager;
 import okhttp3.OkHttpClient;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
-
-import java.util.Random;
-import java.util.UUID;
 
 public class PokemonGoBot {
 
@@ -38,8 +34,6 @@ public class PokemonGoBot {
 
         pokemonGoBot = new BotProfile(pokemonGo,
                 client, Config.getLatitude(), Config.getLongitude());
-        BotManager botManager = new BotManager(pokemonGoBot);
-        botManager.start();
     }
 
     public PokemonGo ptcAuthentication(OkHttpClient client) {

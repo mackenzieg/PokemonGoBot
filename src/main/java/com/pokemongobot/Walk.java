@@ -5,8 +5,12 @@ import com.pokegoapi.google.common.geometry.S2LatLng;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Walk {
+
+    public static boolean flag = false;
 
     public static double getSmallRandom() {
         return Math.random() * 0.0001 - 0.00005;
@@ -25,8 +29,11 @@ public class Walk {
     }
 
     public static void walk(S2LatLng end, final BotProfile botProfile) {
-        if (botProfile.getWalking().get())
+        flag = true;
+        if (botProfile.getWalking().get()) {
+            flag = false;
             return;
+        }
         botProfile.getWalking().set(true);
         S2LatLng start = S2LatLng.fromDegrees(botProfile.getLatitude().get(), botProfile.getLongitude().get());
         S2LatLng difference = end.sub(start);
@@ -37,7 +44,8 @@ public class Walk {
         final double deltaLatitude = difference.latDegrees() / stepsRequired.get();
         final double deltaLongitude = difference.lngDegrees() / stepsRequired.get();
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 botProfile.getLatitude().addAndGet(deltaLatitude);
@@ -47,6 +55,7 @@ public class Walk {
                     System.out.println("Destination reached.");
                     botProfile.getWalking().set(false);
                     cancel();
+                    flag = false;
                 }
             }
         }, 0, 200L);

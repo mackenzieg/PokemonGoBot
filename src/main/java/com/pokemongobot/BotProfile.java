@@ -2,6 +2,7 @@ package com.pokemongobot;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import com.pokegoapi.api.PokemonGo;
+import com.pokemongobot.tasks.BotManager;
 import okhttp3.OkHttpClient;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,10 +16,12 @@ public class BotProfile {
     private AtomicBoolean walking = new AtomicBoolean(false);
 
     public BotProfile(PokemonGo pokemonGo, OkHttpClient http, double latitude, double longitude) {
+        pokemonGo.setLocation(latitude, longitude, 1);
         this.pokemonGo = pokemonGo;
         this.http = http;
         this.latitude.set(latitude);
         this.longitude.set(longitude);
+        new BotManager(this);
     }
 
     public PokemonGo getPokemonGo() {
