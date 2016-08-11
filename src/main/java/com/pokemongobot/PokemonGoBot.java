@@ -23,14 +23,12 @@ public class PokemonGoBot {
         System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Starting bot in 6..."));
         System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Change location now before start!"));
         Thread.sleep(6000);
-        System.out.printf("Starting");
         new PokemonGoBot();
     }
 
     public PokemonGoBot() {
         OkHttpClient client = new OkHttpClient();
         PokemonGo pokemonGo = null;
-        System.out.println(Config.isGoogle());
 
         if (Config.isGoogle())
             pokemonGo = googleAuthentication(client);
@@ -56,15 +54,8 @@ public class PokemonGoBot {
             e.printStackTrace();
         }
 
-        String uuid = UUID.randomUUID().toString();
-        Random random = new Random(uuid.hashCode());
-
-
         DeviceInfo deviceInfo = DeviceInfo.DEFAULT;
         pokemonGo.setDeviceInfo(deviceInfo);
-        SensorInfo sensorInfo = new SensorInfo();
-        sensorInfo.setAngleNormalizedZ(0);
-        pokemonGo.setSensorInfo(sensorInfo);
 
         return pokemonGo;
 

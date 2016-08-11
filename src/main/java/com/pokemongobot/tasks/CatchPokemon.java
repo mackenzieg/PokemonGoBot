@@ -25,12 +25,10 @@ public class CatchPokemon extends Task {
     public void run() throws LoginFailedException, RemoteServerException, NoSuchItemException {
 
         List<CatchablePokemon> pokemons = getBot().getPokemonGo().getMap().getCatchablePokemon();
-        System.out.println(pokemons.size());
+        System.out.println(pokemons.size() + " Pokemon");
         if (pokemons != null) {
             if (pokemons.size() > 0) {
                 CatchablePokemon catchablePokemon = pokemons.get(0);
-
-                System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Starting bot in 6..."));
 
                 EncounterResult encounterResult = catchablePokemon.encounterPokemon();
                 if (encounterResult.getCaptureProbability().getCaptureProbabilityCount() <= Config.getCatchChanceUseRazzberry())

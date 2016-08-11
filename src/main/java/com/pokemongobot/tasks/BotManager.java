@@ -1,48 +1,48 @@
 package com.pokemongobot.tasks;
 
+import com.pokegoapi.exceptions.AsyncPokemonGoException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokemongobot.BotProfile;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class BotManager extends Thread {
 
     public static final double range = 1000; //TODO get from config
     private BotProfile botProfile;
-    private static final ArrayList<Task> tasks = new ArrayList<>();
+    private static final List<Task> tasks = new ArrayList<>();
 
     public BotManager(BotProfile botProfile) {
         this.botProfile = botProfile;
         tasks.add(new CatchPokemon(botProfile));
+        tasks.add(new PokestopNagivator(botProfile));
     }
 
     @Override
     public void run() {
         while (true) {
-            for (Task t : tasks) {
+            Iterator iterator = tasks.iterator();
+            while (iterator.hasNext()) {
                 try {
-
-                    t.run();
-
-                    Thread.sleep(3000);
-
-                    try {
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
+                    ((Task) iterator.next()).run();
                 } catch (LoginFailedException e) {
                     e.printStackTrace();
                 } catch (RemoteServerException e) {
                     e.printStackTrace();
                 } catch (NoSuchItemException e) {
                     e.printStackTrace();
-                } catch (InterruptedException e) {
+                } catch (AsyncPokemonGoException e) {
                     e.printStackTrace();
                 }
+            }
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

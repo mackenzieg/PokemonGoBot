@@ -25,6 +25,7 @@ public class PokestopNagivator extends Task {
     public void run() throws LoginFailedException, RemoteServerException, NoSuchItemException {
 
         Collection<Pokestop> pokestops = getBot().getPokemonGo().getMap().getMapObjects().getPokestops();
+        System.out.println(pokestops.size() + " Pokestops");
 
         if (pokestops != null && pokestops.size() > 0) {
             Optional<Pokestop> optional = pokestops.stream().filter(Pokestop::canLoot).sorted((a, b) -> {
