@@ -1,7 +1,5 @@
 package com.pokemongobot.tasks;
 
-import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.exceptions.EncounterFailedException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.exceptions.RemoteServerException;
@@ -15,7 +13,7 @@ public abstract class Task {
         this.bot = bot;
     }
 
-    public abstract void run() throws LoginFailedException, RemoteServerException, NoSuchItemException, EncounterFailedException;
+    public abstract void run() throws LoginFailedException, RemoteServerException, NoSuchItemException;
 
     public BotProfile getBot() {
         return bot;

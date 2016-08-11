@@ -1,19 +1,11 @@
 package com.pokemongobot.tasks;
 
-import com.pokegoapi.api.map.fort.Pokestop;
-import com.pokegoapi.api.map.pokemon.CatchResult;
-import com.pokegoapi.api.map.pokemon.CatchablePokemon;
-import com.pokegoapi.api.map.pokemon.encounter.EncounterResult;
-import com.pokegoapi.exceptions.EncounterFailedException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokegoapi.google.common.geometry.S2LatLng;
 import com.pokemongobot.BotProfile;
-import com.pokemongobot.Walk;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class BotManager extends Thread {
 
@@ -34,7 +26,7 @@ public class BotManager extends Thread {
 
                     t.run();
 
-                    Thread.sleep(5000);
+                    Thread.sleep(3000);
 
                     try {
 
@@ -47,8 +39,6 @@ public class BotManager extends Thread {
                 } catch (RemoteServerException e) {
                     e.printStackTrace();
                 } catch (NoSuchItemException e) {
-                    e.printStackTrace();
-                } catch (EncounterFailedException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();

@@ -2,10 +2,8 @@ package com.pokemongobot.tasks;
 
 import POGOProtos.Inventory.Item.ItemAwardOuterClass;
 import POGOProtos.Networking.Responses.FortSearchResponseOuterClass;
-import com.pokegoapi.api.inventory.Item;
 import com.pokegoapi.api.map.fort.Pokestop;
 import com.pokegoapi.api.map.fort.PokestopLootResult;
-import com.pokegoapi.exceptions.EncounterFailedException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.exceptions.RemoteServerException;
@@ -15,7 +13,6 @@ import com.pokemongobot.Walk;
 import org.fusesource.jansi.Ansi;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public class PokestopNagivator extends Task {
@@ -25,11 +22,11 @@ public class PokestopNagivator extends Task {
     }
 
     @Override
-    public void run() throws LoginFailedException, RemoteServerException, NoSuchItemException, EncounterFailedException {
+    public void run() throws LoginFailedException, RemoteServerException, NoSuchItemException {
 
         Collection<Pokestop> pokestops = getBot().getPokemonGo().getMap().getMapObjects().getPokestops();
 
-        if(pokestops != null && pokestops.size() > 0) {
+        if (pokestops != null && pokestops.size() > 0) {
             Optional<Pokestop> optional = pokestops.stream().filter(Pokestop::canLoot).sorted((a, b) -> {
                 S2LatLng locationA = S2LatLng.fromDegrees(a.getLatitude(), a.getLongitude());
                 S2LatLng locationB = S2LatLng.fromDegrees(b.getLatitude(), b.getLongitude());
@@ -42,9 +39,9 @@ public class PokestopNagivator extends Task {
                 Pokestop pokestop = optional.get();
                 Walk.setLocation(getBot());
                 PokestopLootResult result = pokestop.loot();
-                if(result.getResult().equals(FortSearchResponseOuterClass.FortSearchResponse.Result.SUCCESS)) {
+                if (result.getResult().equals(FortSearchResponseOuterClass.FortSearchResponse.Result.SUCCESS)) {
                     System.out.println(Ansi.ansi().fg(Ansi.Color.YELLOW).a("Looted Pokestop!"));
-                    for(ItemAwardOuterClass.ItemAward i : result.getItemsAwarded()) {
+                    for (ItemAwardOuterClass.ItemAward i : result.getItemsAwarded()) {
                         System.out.println(Ansi.ansi().fg(Ansi.Color.YELLOW).a("Received " + i.getItemCount() + " " + i.getItemId().name() + " from Pokestops!"));
                     }
 
