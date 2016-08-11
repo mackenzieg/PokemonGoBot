@@ -4,6 +4,7 @@ import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.device.DeviceInfo;
 import com.pokegoapi.api.device.SensorInfo;
 import com.pokegoapi.auth.GoogleAutoCredentialProvider;
+import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokemongobot.tasks.BotManager;
@@ -28,15 +29,29 @@ public class PokemonGoBot {
 
     public PokemonGoBot() {
         OkHttpClient client = new OkHttpClient();
-        PokemonGo pokemonGo = null;
+        PokemonGo pokemonGo;
 
         if (Config.isGoogle())
             pokemonGo = googleAuthentication(client);
+        else
+            pokemonGo = ptcAuthentication(client);
 
         pokemonGoBot = new BotProfile(pokemonGo,
                 client, Config.getLatitude(), Config.getLongitude());
         BotManager botManager = new BotManager(pokemonGoBot);
         botManager.start();
+    }
+
+    public PokemonGo ptcAuthentication(OkHttpClient client) {
+        PokemonGo pokemonGo = null;
+        try {
+            pokemonGo = new PokemonGo(new PtcCredentialProvider(client, Config.getUsername(), Config.getPassword()), client);
+        } catch (LoginFailedException e) {
+            e.printStackTrace();
+        } catch (RemoteServerException e) {
+            e.printStackTrace();
+        }
+        return pokemonGo;
     }
 
     public PokemonGo googleAuthentication(OkHttpClient client) {

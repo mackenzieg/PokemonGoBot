@@ -5,6 +5,7 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokemongobot.BotProfile;
+import com.pokemongobot.Config;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,7 +13,6 @@ import java.util.List;
 
 public class BotManager extends Thread {
 
-    public static final double range = 1000; //TODO get from config
     private BotProfile botProfile;
     private static final List<Task> tasks = new ArrayList<>();
 
