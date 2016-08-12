@@ -1,4 +1,4 @@
-package com.pokemongobot;
+package com.pokemongobot.actions;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.device.DeviceInfo;
@@ -6,14 +6,15 @@ import com.pokegoapi.auth.GoogleAutoCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokemongobot.tasks.BotManager;
+import com.pokegoapi.google.common.geometry.S2LatLng;
+import com.pokemongobot.SimplePokemonBot;
+import com.pokemongobot.config.Config;
 import okhttp3.OkHttpClient;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 public class PokemonGoBot {
 
-    private BotProfile pokemonGoBot;
 
     public static void main(String[] args) throws InterruptedException {
         AnsiConsole.systemInstall();
@@ -32,8 +33,7 @@ public class PokemonGoBot {
         else
             pokemonGo = ptcAuthentication(client);
 
-        pokemonGoBot = new BotProfile(pokemonGo,
-                client, Config.getLatitude(), Config.getLongitude());
+        new SimplePokemonBot(S2LatLng.fromDegrees(Config.getLatitude(), Config.getLongitude()), pokemonGo, client);
     }
 
     public PokemonGo ptcAuthentication(OkHttpClient client) {

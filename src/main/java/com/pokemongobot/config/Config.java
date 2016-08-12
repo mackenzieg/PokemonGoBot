@@ -1,4 +1,4 @@
-package com.pokemongobot;
+package com.pokemongobot.config;
 
 import java.io.*;
 import java.lang.reflect.Field;
