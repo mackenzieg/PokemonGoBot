@@ -2,7 +2,6 @@ package com.pokemongobot.tasks;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokemongobot.config.Config;
 import com.pokemongobot.PokemonBot;
 
 import java.util.ArrayList;
@@ -31,13 +30,13 @@ public class TransferPokemonActivity implements BotActivity {
         if (pokemons.size() > 0) {
             pokemons.forEach(p -> {
                 if (!p.isFavorite()) {
-                    if ((iv == -1 ? p.getCp() : p.getIvRatio()) < (iv == -1 ? Config.getCP() : Config.getIV())) {
+                    if ((iv == -1 ? p.getCp() : p.getIvRatio()) < (iv == -1 ? cp : iv)) {
                         try {
                             Result result = p.transferPokemon();
                             transferred.add(result);
                         } catch (Exception e) {
                             //TODO Log
-                            e.printStackTrace();
+                            ;
                         }
                     }
                 }

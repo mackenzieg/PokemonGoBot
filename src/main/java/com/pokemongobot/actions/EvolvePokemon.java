@@ -12,7 +12,6 @@ public class EvolvePokemon {
     public static List<EvolutionResult> evolvePokemon(List<Pokemon> pokemons, CandyJar candyJar) {
         List<EvolutionResult> results = new ArrayList<>();
         pokemons.forEach(pokemon -> {
-            boolean doEvolve = false;
             int candies = candyJar.getCandies(pokemon.getPokemonFamily());
             int candiesEvolve = pokemon.getCandiesToEvolve();
             if(candies >= candiesEvolve) {

@@ -23,7 +23,9 @@ public class LootPokestop {
                 PokestopLootResult pokestopLootResult = pokestop.loot();
                 if (pokestopLootResult.wasSuccessful()) {
                     //TODO add log
-                    ;
+                    System.out.println("Looted Pokestop");
+                } else {
+                    System.out.println("Failed looting pokestop");
                 }
                 return pokestopLootResult;
             }

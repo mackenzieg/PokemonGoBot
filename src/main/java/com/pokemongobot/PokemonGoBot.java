@@ -18,9 +18,9 @@ public class PokemonGoBot {
 
     public static void main(String[] args) throws InterruptedException {
         AnsiConsole.systemInstall();
-        System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Starting bot in 6..."));
+        System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Starting bot in 5..."));
         System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Change location now before start!"));
-        Thread.sleep(6000);
+        Thread.sleep(2000);
         new PokemonGoBot();
     }
 
@@ -34,7 +34,7 @@ public class PokemonGoBot {
             pokemonGo = ptcAuthentication(client);
         SimplePokemonBot bot = new SimplePokemonBot(S2LatLng.fromDegrees(Config.getLatitude(), Config.getLongitude()),
                 pokemonGo, client);
-        //simplePokemonBot.fixSoftBan(S2LatLng.fromDegrees(l.getLatitude(), l.getLongitude()));
+        bot.wander();
     }
 
     public PokemonGo ptcAuthentication(OkHttpClient client) {

@@ -4,6 +4,7 @@ import POGOProtos.Networking.Responses.CatchPokemonResponseOuterClass.CatchPokem
 import com.pokegoapi.api.map.pokemon.CatchResult;
 import com.pokegoapi.api.map.pokemon.CatchablePokemon;
 import com.pokegoapi.api.map.pokemon.encounter.EncounterResult;
+import com.pokegoapi.exceptions.*;
 import com.pokemongobot.config.Config;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class CatchPokemon {
         List<CatchResult> results = new ArrayList<>(pokemonList.size());
         pokemonList.forEach(pokemon -> {
             CatchResult result = attemptCatch(pokemon);
-            if (!result.isFailed())
+            if (result != null && !result.isFailed())
                 results.add(result);
         });
         return results;
@@ -28,30 +29,36 @@ public class CatchPokemon {
         try {
             int probability = encounterResult.getCaptureProbability().getCaptureProbabilityCount();
             CatchResult catchResult = null;
-            if (probability <= Config.getCatchChanceUseRazzberry())
+            /*if (probability <= Config.getCatchChanceUseRazzberry())
                 catchResult = pokemon.catchPokemonWithRazzBerry();
             else
-                catchResult = pokemon.catchPokemon();
+                catchResult = pokemon.catchPokemon();*/
+            catchResult = pokemon.catchPokemonBestBallToUse();
             CatchStatus catchStatus = catchResult.getStatus();
             while (catchStatus == CatchStatus.CATCH_MISSED) {
-                if (probability <= Config.getCatchChanceUseRazzberry())
-                    catchResult = pokemon.catchPokemonWithRazzBerry();
-                else
-                    catchResult = pokemon.catchPokemon();
+                catchResult = pokemon.catchPokemonBestBallToUse();
                 catchStatus = catchResult.getStatus();
             }
             switch (catchResult.getStatus()) {
                 case CATCH_SUCCESS:
                     //TODO Log
-                    System.out.println("Caught pokemon");
+                    System.out.println("Caught pokemon " + pokemon.getPokemonId().name());
                     break;
                 default:
                     //TODO Log
-                    System.out.println("Pokemon got away");
+                    System.out.println("" + pokemon.getPokemonId().name() + " got away reason " + catchResult.getStatus().toString());
                     break;
             }
             return catchResult;
-        } catch (Exception e) {
+        } catch (AsyncPokemonGoException e) {
+            e.printStackTrace();
+        } catch (RemoteServerException e) {
+            e.printStackTrace();
+        } catch (EncounterFailedException e) {
+            e.printStackTrace();
+        } catch (LoginFailedException e) {
+            e.printStackTrace();
+        } catch (NoSuchItemException e) {
             e.printStackTrace();
         }
         return null;
