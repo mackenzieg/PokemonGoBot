@@ -1,13 +1,13 @@
-package com.pokemongobot.actions;
+package com.pokemongobot;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.device.DeviceInfo;
+import com.pokegoapi.api.map.fort.Pokestop;
 import com.pokegoapi.auth.GoogleAutoCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.google.common.geometry.S2LatLng;
-import com.pokemongobot.SimplePokemonBot;
 import com.pokemongobot.config.Config;
 import okhttp3.OkHttpClient;
 import org.fusesource.jansi.Ansi;
@@ -32,8 +32,9 @@ public class PokemonGoBot {
             pokemonGo = googleAuthentication(client);
         else
             pokemonGo = ptcAuthentication(client);
-
-        new SimplePokemonBot(S2LatLng.fromDegrees(Config.getLatitude(), Config.getLongitude()), pokemonGo, client);
+        SimplePokemonBot bot = new SimplePokemonBot(S2LatLng.fromDegrees(Config.getLatitude(), Config.getLongitude()),
+                pokemonGo, client);
+        //simplePokemonBot.fixSoftBan(S2LatLng.fromDegrees(l.getLatitude(), l.getLongitude()));
     }
 
     public PokemonGo ptcAuthentication(OkHttpClient client) {

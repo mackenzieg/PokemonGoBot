@@ -68,7 +68,7 @@ public class SimplePokemonBot implements PokemonBot {
         }
         BotWalker botWalker = new BotWalker(this.startLocation, locationListener, heartBeatListener);
         botWalker.addPostStepActivity(catchPokemonActivity);
-
+        System.out.println(this.getApi().getMap() == null);
         this.botWalker = botWalker;
         this.state = State.NAN;
 

@@ -1,7 +1,5 @@
 package com.pokemongobot.actions;
 
-import com.google.maps.GeoApiContext;
-import com.google.maps.model.LatLng;
 import com.pokegoapi.google.common.geometry.S2LatLng;
 import com.pokemongobot.listeners.HeartBeatListener;
 import com.pokemongobot.listeners.LocationListener;
@@ -21,7 +19,6 @@ public class BotWalker {
 
     private AtomicReference<S2LatLng> currentLocation;
     private AtomicLong lastLocationMs = new AtomicLong(0);
-    private double lastAltitude = 2;
 
     public BotWalker(final S2LatLng start, final LocationListener locationListener,
                      final HeartBeatListener heartBeatListener) {
