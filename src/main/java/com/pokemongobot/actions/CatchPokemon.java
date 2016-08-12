@@ -33,7 +33,7 @@ public class CatchPokemon {
                 catchResult = pokemon.catchPokemonWithRazzBerry();
             else
                 catchResult = pokemon.catchPokemon();*/
-            catchResult = pokemon.catchPokemonBestBallToUse();
+            catchResult = pokemon.catchPokemon();
             CatchStatus catchStatus = catchResult.getStatus();
             while (catchStatus == CatchStatus.CATCH_MISSED) {
                 catchResult = pokemon.catchPokemonBestBallToUse();

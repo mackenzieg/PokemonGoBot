@@ -95,6 +95,8 @@ public class BotWalker {
         for(S2LatLng step : steps) {
             double speed = setCurrentLocation(step);
         }
+        sleep(100);
+        setCurrentLocation(destination);
 
         longSleep();
 

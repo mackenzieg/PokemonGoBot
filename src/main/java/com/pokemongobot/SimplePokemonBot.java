@@ -73,7 +73,6 @@ public class SimplePokemonBot implements PokemonBot {
 
     @Override
     public void wander() {
-        System.out.println(fixSoftBan());
         long xp = 0;
         long time = System.currentTimeMillis();
         try {
@@ -85,61 +84,60 @@ public class SimplePokemonBot implements PokemonBot {
         }
         boolean stop = false;
         while (!stop) {
-            List<Pokestop> pokestops = getNearbyPokestops();
-            System.out.println(pokestops.size());
-            if (pokestops.size() < 1) {
-                break;
-            }
-            catchNearbyPokemon();
-            lootNearbyPokestops(false);
-            if (Config.isTransfer()) {
-                doTransfers();
-                try {
-                    Thread.sleep(150);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            try {
+                List<Pokestop> pokestops = getNearbyPokestops();
+                System.out.println("Found " + pokestops.size() + " Pokestops nearby");
+                if (pokestops.size() < 1) {
+                    break;
                 }
-            }
-            if (Config.isEvolve()) {
-                doEvolutions();
-                try {
-                    Thread.sleep(150);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            for (Pokestop p : pokestops) {
-                try {
-                    System.out.println("Walking to " + p.getDetails().getName() + " "
-                            + this.getCurrentLocation().getEarthDistance(S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude())) + "m away");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                botWalker.runTo(getCurrentLocation(), S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()));
                 catchNearbyPokemon();
                 lootNearbyPokestops(false);
                 if (Config.isTransfer()) {
                     doTransfers();
+                    Thread.sleep(100 + getRandom().longValue());
                 }
                 if (Config.isEvolve()) {
                     doEvolutions();
+                    Thread.sleep(100 + getRandom().longValue());
                 }
-                try {
-                    Thread.sleep(500 + new Random().nextInt(500 - 100 + 1) + 100);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (time + 10000 <= System.currentTimeMillis()) {
+                for (Pokestop p : pokestops) {
                     try {
-                        time = System.currentTimeMillis();
-                        System.out.println(getApi().getPlayerProfile().getStats().getExperience() - xp + " Experience gained");
-                    } catch (LoginFailedException e) {
-                        e.printStackTrace();
-                    } catch (RemoteServerException e) {
+                        System.out.println("Walking to " + p.getDetails().getName() + " "
+                                + this.getCurrentLocation().getEarthDistance(S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude())) + "m away");
+                    } catch (AsyncPokemonGoException | RemoteServerException | LoginFailedException e) {
                         e.printStackTrace();
                     }
-                    //System.exit(0);
+                    botWalker.runTo(getCurrentLocation(), S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()));
+
+                    catchNearbyPokemon();
+                    lootNearbyPokestops(false);
+
+                    if (Config.isTransfer()) {
+                        doTransfers();
+                    }
+                    if (Config.isEvolve()) {
+                        doEvolutions();
+                    }
+                    getApi().getPlayerProfile().updateProfile();
+                    try {
+                        Thread.sleep(500 + new Random().nextInt(500 - 100 + 1) + 100);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (time + 10000 <= System.currentTimeMillis()) {
+                        try {
+                            time = System.currentTimeMillis();
+                            System.out.println(getApi().getPlayerProfile().getStats().getExperience() - xp + " Experience gained");
+                        } catch (LoginFailedException e) {
+                            e.printStackTrace();
+                        } catch (RemoteServerException e) {
+                            e.printStackTrace();
+                        }
+                        //System.exit(0);
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -347,11 +345,11 @@ public class SimplePokemonBot implements PokemonBot {
 
         pokestops.stream().filter(p -> p.canLoot(true)).forEach(p ->
         {
-            botWalker.walkTo(1, getCurrentLocation(), S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()));
+            botWalker.runTo(getCurrentLocation(), S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()));
             results.add(lootPokestop(p));
         });
 
-        botWalker.walkTo(1, getCurrentLocation(), origin);
+        botWalker.runTo(getCurrentLocation(), origin);
 
         return results;
     }

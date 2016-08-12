@@ -12,7 +12,8 @@ public class LootPokestop {
         final List<PokestopLootResult> result = new ArrayList<>(pokestops.size());
         pokestops.forEach(pokestop -> {
             PokestopLootResult r = lootPokestop(pokestop);
-            result.add(r);
+            if(!(r == null))
+                result.add(r);
         });
         return result;
     }
@@ -25,7 +26,7 @@ public class LootPokestop {
                     //TODO add log
                     System.out.println("Looted Pokestop");
                 } else {
-                    System.out.println("Failed looting pokestop");
+                    System.out.println("Failed looting pokestop reason: " + pokestopLootResult.getResult().name());
                 }
                 return pokestopLootResult;
             }
