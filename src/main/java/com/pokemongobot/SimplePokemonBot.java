@@ -36,10 +36,10 @@ import java.util.stream.Collectors;
 
 public class SimplePokemonBot implements PokemonBot {
 
-    private State state;
     private final S2LatLng startLocation;
     private final PokemonGo api;
     private final OkHttpClient httpClient;
+    private State state;
     private BotWalker botWalker;
 
     private State currentOperation = State.NAN;
@@ -64,11 +64,15 @@ public class SimplePokemonBot implements PokemonBot {
         if (Config.isTransfer()) {
             heartBeatListener.addHeartBeatActivity(transferPokemonActivity);
         }
-        BotWalker botWalker = new BotWalker(this.startLocation, locationListener, heartBeatListener);
+        BotWalker botWalker = new BotWalker(this, this.startLocation, locationListener, heartBeatListener);
         botWalker.addPostStepActivity(catchPokemonActivity);
         this.botWalker = botWalker;
         this.state = State.NAN;
 
+    }
+
+    protected static Double getRandom() {
+        return Math.random() * 750;
     }
 
     @Override
@@ -77,10 +81,9 @@ public class SimplePokemonBot implements PokemonBot {
         long time = System.currentTimeMillis();
         try {
             xp = this.getApi().getPlayerProfile().getStats().getExperience();
-        } catch (LoginFailedException e) {
-            e.printStackTrace();
-        } catch (RemoteServerException e) {
-            e.printStackTrace();
+        } catch (AsyncPokemonGoException | RemoteServerException | LoginFailedException e) {
+            System.out.println("Error");
+            //TODO log error
         }
         boolean stop = false;
         while (!stop) {
@@ -108,7 +111,7 @@ public class SimplePokemonBot implements PokemonBot {
                         e.printStackTrace();
                     }
                     botWalker.runTo(getCurrentLocation(), S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()));
-
+                    System.out.println("Ending distance from pokestop: " + S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()).getEarthDistance(this.getCurrentLocation()));
                     catchNearbyPokemon();
                     lootNearbyPokestops(false);
 
@@ -118,7 +121,6 @@ public class SimplePokemonBot implements PokemonBot {
                     if (Config.isEvolve()) {
                         doEvolutions();
                     }
-                    getApi().getPlayerProfile().updateProfile();
                     try {
                         Thread.sleep(500 + new Random().nextInt(500 - 100 + 1) + 100);
                     } catch (Exception e) {
@@ -151,7 +153,6 @@ public class SimplePokemonBot implements PokemonBot {
             return false;
         }
     }
-
 
     public final boolean fixSoftBan(S2LatLng destination) {
         this.getWalker().runTo(this.getCurrentLocation(), destination);
@@ -223,10 +224,6 @@ public class SimplePokemonBot implements PokemonBot {
         return "";
     }
 
-    protected static Double getRandom() {
-        return Math.random() * 750;
-    }
-
     public List<Pokestop> getNearbyPokestops() {
         return getPokestops().stream().filter(pokestop ->
                 //TODO get max distance from config, for now 5Km
@@ -244,22 +241,20 @@ public class SimplePokemonBot implements PokemonBot {
         return a.transferPokemon();
     }
 
-    private List<EvolutionResult> doEvolutions() {
-        Inventories inventories = null;
-        try {
-            inventories = getApi().getInventories();
-        } catch (LoginFailedException e) {
-            e.printStackTrace();
-        } catch (RemoteServerException e) {
-            e.printStackTrace();
-        }
+    public List<EvolutionResult> doEvolutions() {
+        Inventories inventories = getInventory();
+        if (inventories == null)
+            return new ArrayList<>();
+
         final CandyJar candyJar = inventories.getCandyjar();
 
         final List<Pokemon> pokemons = inventories.getPokebank()
                 .getPokemons()
                 .stream()
                 .sorted((Pokemon a, Pokemon b) ->
-                        Integer.compare(b.getCp(), a.getCp()))
+                        Integer.compare(b.getCp(), a.getCp())).filter(pokemon ->
+                        (pokemon.getCandiesToEvolve() > 0 && candyJar.getCandies(pokemon.getPokemonFamily()) >= pokemon.getCandiesToEvolve())
+                )
                 .collect(Collectors.toList());
 
         return EvolvePokemon.evolvePokemon(pokemons, candyJar);
@@ -269,10 +264,8 @@ public class SimplePokemonBot implements PokemonBot {
     public Inventories getInventory() {
         try {
             return getApi().getInventories();
-        } catch (LoginFailedException e) {
-            e.printStackTrace();
-        } catch (RemoteServerException e) {
-            e.printStackTrace();
+        } catch (AsyncPokemonGoException | LoginFailedException | RemoteServerException e) {
+
         }
         return null;
     }
@@ -281,8 +274,8 @@ public class SimplePokemonBot implements PokemonBot {
         this.lastOperation = this.currentOperation;
         this.currentOperation = status;
 
-//        if(lastOperation != currentOperation)
-//            LOG.info("Switching from " + this.lastOperation + " to " + this.currentOperation);
+        if (lastOperation != currentOperation)
+            System.out.println("Switching from " + this.lastOperation + " to " + this.currentOperation);
 
         return this.lastOperation;
     }

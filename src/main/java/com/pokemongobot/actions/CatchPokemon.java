@@ -5,7 +5,6 @@ import com.pokegoapi.api.map.pokemon.CatchResult;
 import com.pokegoapi.api.map.pokemon.CatchablePokemon;
 import com.pokegoapi.api.map.pokemon.encounter.EncounterResult;
 import com.pokegoapi.exceptions.*;
-import com.pokemongobot.config.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ public class CatchPokemon {
             return null;
         try {
             int probability = encounterResult.getCaptureProbability().getCaptureProbabilityCount();
-            CatchResult catchResult = null;
+            CatchResult catchResult;
             /*if (probability <= Config.getCatchChanceUseRazzberry())
                 catchResult = pokemon.catchPokemonWithRazzBerry();
             else
@@ -50,16 +49,9 @@ public class CatchPokemon {
                     break;
             }
             return catchResult;
-        } catch (AsyncPokemonGoException e) {
-            e.printStackTrace();
-        } catch (RemoteServerException e) {
-            e.printStackTrace();
-        } catch (EncounterFailedException e) {
-            e.printStackTrace();
-        } catch (LoginFailedException e) {
-            e.printStackTrace();
-        } catch (NoSuchItemException e) {
-            e.printStackTrace();
+        } catch (AsyncPokemonGoException | RemoteServerException | EncounterFailedException | LoginFailedException | NoSuchItemException e) {
+            System.out.println("Error");
+            //TODO log error
         }
         return null;
 

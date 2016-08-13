@@ -3,6 +3,9 @@ package com.pokemongobot.actions;
 import com.pokegoapi.api.inventory.CandyJar;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.exceptions.AsyncPokemonGoException;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +28,16 @@ public class EvolvePokemon {
 
     public static EvolutionResult evolve(Pokemon pokemon) {
         try {
+            if (pokemon == null)
+                return null;
             EvolutionResult result = pokemon.evolve();
             if(result.isSuccessful()) {
                 //TODO LOG it here
                 System.out.println("Evolved pokemon");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (AsyncPokemonGoException | LoginFailedException | RemoteServerException e) {
+            System.out.println("Error");
+            //TODO log error
         }
         return null;
     }

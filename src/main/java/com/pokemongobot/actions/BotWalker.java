@@ -1,6 +1,7 @@
 package com.pokemongobot.actions;
 
 import com.pokegoapi.google.common.geometry.S2LatLng;
+import com.pokemongobot.PokemonBot;
 import com.pokemongobot.config.Config;
 import com.pokemongobot.listeners.HeartBeatListener;
 import com.pokemongobot.listeners.LocationListener;
@@ -17,15 +18,24 @@ public class BotWalker {
     private final HeartBeatListener heartBeatListener;
     private final List<BotActivity> postStepActivities = new ArrayList<>();
     private final LocationListener locationListener;
-
+    private PokemonBot bot;
     private AtomicReference<S2LatLng> currentLocation;
     private AtomicLong lastLocationMs = new AtomicLong(0);
 
-    public BotWalker(final S2LatLng start, final LocationListener locationListener,
+    public BotWalker(final PokemonBot bot, final S2LatLng start, final LocationListener locationListener,
                      final HeartBeatListener heartBeatListener) {
+        this.bot = bot;
         this.currentLocation = new AtomicReference<>(start);
         this.locationListener = locationListener;
         this.heartBeatListener = heartBeatListener;
+    }
+
+    protected static long getTimeoutForDistance(double distance) {
+        if (Double.isInfinite(distance) || Double.isNaN(distance) || (Double.compare(distance, 1) < 1)) {
+            return 0;
+        }
+        Double ms = ((distance / SPEED)) + 75;
+        return ms.longValue();
     }
 
     public synchronized void addPostStepActivity(BotActivity activity) {
@@ -46,8 +56,7 @@ public class BotWalker {
         if (steps == null) {
             setCurrentLocation(end);
             return;
-        } else
-            System.out.println(steps.length + " Steps to destination");
+        }
         long preTime = System.currentTimeMillis();
 
         double totalDis = start.getEarthDistance(end);
@@ -57,7 +66,7 @@ public class BotWalker {
             double distance = current.getEarthDistance(end);
             try {
                 if (Double.compare(distance, SPEED) > 0) {
-                    long timeout = getTimeoutForDistance(distance, step.getEarthDistance(end));
+                    long timeout = getTimeoutForDistance(distance);
                     System.out.println(distance);
                     System.out.println(timeout);
                     if (timeout > 0)
@@ -75,14 +84,13 @@ public class BotWalker {
             }
         }
         long time = (System.currentTimeMillis() - preTime) / 1000;
-        System.out.println(time + " seconds to travel");
-        System.out.println("average speed was " + totalDis / time);
         performHeartBeat();
         performPostStepActivities();
     }
 
     public synchronized void runTo(final S2LatLng origin, final S2LatLng destination) {
         S2LatLng[] steps = getStepsToDestination(origin, destination, 5);
+        setCurrentLocation(origin);
         if (steps == null) {
             setCurrentLocation(destination);
             return;
@@ -91,23 +99,14 @@ public class BotWalker {
             performHeartBeat();
             return;
         }
-
-        for(S2LatLng step : steps) {
-            double speed = setCurrentLocation(step);
+        for (int i = steps.length - 1; i >= 0; i--) {
+            double speed = setCurrentLocation(steps[i]);
+            bot.setCurrentLocation(steps[i]);
+            sleep(10);
         }
-        sleep(100);
-        setCurrentLocation(destination);
 
         longSleep();
 
-    }
-
-    protected static long getTimeoutForDistance(double distance, double distanceToEnd) {
-        if (Double.isInfinite(distance) || Double.isNaN(distance) || (Double.compare(distance, 1) < 1)) {
-            return 0;
-        }
-        Double ms = ((distance / SPEED)) + 75;
-        return ms.longValue();
     }
 
     public final synchronized double setCurrentLocation(S2LatLng newLocation) {
@@ -139,13 +138,18 @@ public class BotWalker {
     public final S2LatLng[] getStepsToDestination(final S2LatLng start, final S2LatLng end, final double stepMeters) {
         if (start.getEarthDistance(end) == 0)
             return new S2LatLng[]{start};
+        double deltaLat = end.latDegrees() - start.latDegrees();
+        double deltaLng = end.lngDegrees() - start.lngDegrees();
         S2LatLng difference = end.sub(start);
         double distance = start.getEarthDistance(end);
         final int stepsRequired = (int) Math.round(distance / stepMeters);
+
         S2LatLng[] steps = new S2LatLng[stepsRequired + 1];
-        steps[0] = S2LatLng.fromDegrees(start.latDegrees(), start.lngDegrees());
-        for (int i = 1; i <= stepsRequired; i++) {
-            steps[i] = S2LatLng.fromDegrees(steps[i - 1].latDegrees() + difference.latDegrees(), steps[i - 1].lngDegrees() + difference.lngDegrees());
+        S2LatLng previous = start;
+        steps[0] = start;
+        for (int i = 0; i <= stepsRequired; i++) {
+            steps[i] = S2LatLng.fromDegrees(previous.latDegrees() + deltaLat, previous.lngDegrees() + deltaLng);
+            previous = steps[i];
         }
         return steps;
     }
