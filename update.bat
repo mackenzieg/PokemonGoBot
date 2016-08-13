@@ -6,3 +6,5 @@ cd library
 git submodule update --init
 ./gradlew :library:build
 cd..
+
+maven install

@@ -100,7 +100,13 @@ public class SimplePokemonBot implements PokemonBot {
                     Thread.sleep(100 + getRandom().longValue());
                 }
                 if (Config.isEvolve()) {
-                    doEvolutions();
+                    List<EvolutionResult> evolved = doEvolutions();
+                    evolved.forEach(evolutionResult -> {
+                        if (evolutionResult.isSuccessful()) {
+                            System.out.println("Evolved Pokemon: " + evolutionResult.getEvolvedPokemon().getPokemonId().name());
+                        }
+                    });
+
                     Thread.sleep(100 + getRandom().longValue());
                 }
                 for (Pokestop p : pokestops) {
@@ -111,9 +117,10 @@ public class SimplePokemonBot implements PokemonBot {
                         e.printStackTrace();
                     }
                     botWalker.runTo(getCurrentLocation(), S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()));
-                    System.out.println("Ending distance from pokestop: " + S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()).getEarthDistance(this.getCurrentLocation()));
-                    catchNearbyPokemon();
+                    this.setCurrentLocation(S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()));
+                    lootPokestop(p);
                     lootNearbyPokestops(false);
+                    catchNearbyPokemon();
 
                     if (Config.isTransfer()) {
                         doTransfers();

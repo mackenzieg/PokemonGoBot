@@ -1,7 +1,10 @@
 *.class
 
+# General Stuff
+src/main/resources/META-INF
 library
 config.properties
+
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
