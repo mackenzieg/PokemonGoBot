@@ -28,8 +28,22 @@ public class TransferPokemonActivity implements BotActivity {
         List<Result> transferred = new ArrayList<>();
         if (pokemons.size() > 0) {
             pokemons.forEach(p -> {
-                if (!p.isFavorite()) {
-                    if (options.isIvOverCp() ? (p.getIvRatio() < options.getIv()) : (p.getCp() < options.getCp())) {
+                boolean protect = false;
+                boolean obligatory = false;
+                for (String name : options.getProtect()) {
+                    if (p.getPokemonId().name().equalsIgnoreCase(name)) {
+                        protect = true;
+                        break;
+                    }
+                }
+                for (String name : options.getObligatory()) {
+                    if (p.getPokemonId().name().equalsIgnoreCase(name)) {
+                        obligatory = true;
+                        break;
+                    }
+                }
+                if (!protect) {
+                    if (obligatory || (!p.isFavorite() && (options.isIvOverCp() ? (p.getIvRatio() < options.getIv()) : (p.getCp() < options.getCp())))) {
                         try {
                             Result result = p.transferPokemon();
                             transferred.add(result);
@@ -37,7 +51,8 @@ public class TransferPokemonActivity implements BotActivity {
                             //TODO Log
                             ;
                         }
-                    }
+                        }
+
                 }
             });
         }
