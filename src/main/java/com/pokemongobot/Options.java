@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Options {
 
+    private String name;
+
     private InetSocketAddress proxy;
     private String proxyCredentials;
     private boolean google;
@@ -35,6 +37,14 @@ public class Options {
 
     public Options() {
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isManageEggs() {

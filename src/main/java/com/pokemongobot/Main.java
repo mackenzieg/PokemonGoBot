@@ -25,11 +25,12 @@ public class Main {
         try {
             Config config = new Config(new File("config.json"));
             List<Options> options = config.loadConfig();
+            BotRunner botRunner;
             for (Options option : options) {
-                PokemonGo pokemonGo = buildPokemonGo(option);
-
+                botRunner = new BotRunner(option);
+                botRunner.start();
             }
-        } catch (AsyncPokemonGoException | LoginFailedException | RemoteServerException | JSONException e) {
+        } catch (AsyncPokemonGoException | JSONException e) {
             e.printStackTrace();
         }
     }
@@ -42,7 +43,7 @@ public class Main {
         new Main();
     }
 
-    public PokemonGo buildPokemonGo(Options option) throws LoginFailedException, RemoteServerException {
+    public static PokemonGo buildPokemonGo(Options option) throws LoginFailedException, RemoteServerException {
         OkHttpClient client;
 
         if (option.getProxy() != null) {
@@ -78,11 +79,12 @@ public class Main {
         return pokemonGo;
     }
 
-    public CredentialProvider ptcAuthentication(OkHttpClient client, String username, String password) throws LoginFailedException, RemoteServerException {
+    private static CredentialProvider ptcAuthentication(OkHttpClient client, String username, String password) throws LoginFailedException, RemoteServerException {
         return new PtcCredentialProvider(client, username, password);
     }
 
-    public CredentialProvider googleAuthentication(OkHttpClient client, String username, String password) throws LoginFailedException, RemoteServerException {
+    private static CredentialProvider googleAuthentication(OkHttpClient client, String username, String password) throws LoginFailedException, RemoteServerException {
         return new GoogleAutoCredentialProvider(client, username, password);
     }
+
 }

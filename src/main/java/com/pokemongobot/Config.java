@@ -14,7 +14,6 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 public class Config {
 
@@ -26,11 +25,15 @@ public class Config {
 
     public List<Options> loadConfig() throws JSONException {
 
-        List<JSONObject> jsonObjects = readJson(this.file);
+        List<BotWrapper> jsonObjects = readJson(this.file);
         List<Options> options = new ArrayList<>(jsonObjects.size());
 
-        for (JSONObject jsonObject : jsonObjects) {
+        for (BotWrapper botWrapper : jsonObjects) {
+            JSONObject jsonObject = botWrapper.getJsonObject();
             Options option = new Options();
+
+            option.setName(botWrapper.getName());
+
             JSONObject proxy = (JSONObject) jsonObject.get("proxy");
             if (!(proxy.getString("ip").isEmpty() && proxy.getString("port").isEmpty())) {
                 option.setProxy(new InetSocketAddress(proxy.getString("ip"), Integer.valueOf(proxy.getString("port"))));
@@ -112,7 +115,7 @@ public class Config {
         return options;
     }
 
-    private List<JSONObject> readJson(File file) {
+    private List<BotWrapper> readJson(File file) {
         String jsonData = "";
         BufferedReader bufferedReader = null;
         try {
@@ -131,29 +134,51 @@ public class Config {
                 ex.printStackTrace();
             }
         }
-        List<JSONObject> jsonObjects = null;
+        List<BotWrapper> jsonObjects = null;
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONObject bots = (JSONObject) jsonObject.get("bots");
             Iterator iterator = bots.sortedKeys();
-            Stack<String> paths = new Stack<>();
+            jsonObjects = new ArrayList<>();
             while (iterator.hasNext()) {
                 String botPath = (String) iterator.next();
                 if (!botPath.contains("comment")) {
-                    System.out.println("Loading bot with name: " + botPath);
-                    paths.add(botPath);
+                    BotWrapper botWrapper = new BotWrapper();
+                    botWrapper.setName(botPath);
+                    botWrapper.setJsonObject((JSONObject) bots.get(botPath));
+                    jsonObjects.add(botWrapper);
+                    System.out.println("Loading bot with name: " + botWrapper.getName());
                 }
-            }
-            jsonObjects = new ArrayList<>(paths.size());
-            for (String path : paths) {
-                jsonObjects.add((JSONObject) bots.get(path));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (jsonObjects == null)
             return new ArrayList<>();
+
         return jsonObjects;
+    }
+
+    private class BotWrapper {
+        private JSONObject jsonObject;
+        private String name;
+
+        public JSONObject getJsonObject() {
+            return jsonObject;
+        }
+
+        public void setJsonObject(JSONObject jsonObject) {
+            this.jsonObject = jsonObject;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
     }
 
 }

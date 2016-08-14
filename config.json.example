@@ -10,7 +10,7 @@
         "user": "trump",
         "password": "build_it_tall"
       },
-      "google_description": "google login, replace with ptc for ptc login",
+      "login_description": "google login, replace with ptc for ptc login",
       "google": {
         "username": "example_username",
         "password": "example_password"

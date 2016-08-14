@@ -28,12 +28,14 @@ import com.pokemongobot.listeners.SimpleHeartBeatListener;
 import com.pokemongobot.listeners.SimpleLocationListener;
 import com.pokemongobot.tasks.CatchPokemonActivity;
 import com.pokemongobot.tasks.TransferPokemonActivity;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SimplePokemonBot implements PokemonBot {
 
+    private final Logger logger = Logger.getLogger(Thread.currentThread().getName());
     private final PokemonGo api;
     private State state;
     private BotWalker botWalker;
@@ -49,9 +51,6 @@ public class SimplePokemonBot implements PokemonBot {
         CatchPokemonActivity catchPokemonActivity = new CatchPokemonActivity(this);
         TransferPokemonActivity transferPokemonActivity =
                 new TransferPokemonActivity(this, options);
-
-        //TODO add location listener
-        //TODO add heart beat listener
 
         HeartBeatListener heartBeatListener = new SimpleHeartBeatListener(50, this);
         heartBeatListener.addHeartBeatActivity(catchPokemonActivity);
