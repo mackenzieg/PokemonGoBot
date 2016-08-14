@@ -1,8 +1,8 @@
 package com.pokemongobot.actions;
 
 import com.pokegoapi.google.common.geometry.S2LatLng;
+import com.pokemongobot.Options;
 import com.pokemongobot.PokemonBot;
-import com.pokemongobot.config.Config;
 import com.pokemongobot.listeners.HeartBeatListener;
 import com.pokemongobot.listeners.LocationListener;
 import com.pokemongobot.tasks.BotActivity;
@@ -14,20 +14,23 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class BotWalker {
 
-    private static final double SPEED = Config.getSpeed();
+    private static double SPEED;
     private final HeartBeatListener heartBeatListener;
     private final List<BotActivity> postStepActivities = new ArrayList<>();
     private final LocationListener locationListener;
+    private final Options options;
     private PokemonBot bot;
     private AtomicReference<S2LatLng> currentLocation;
     private AtomicLong lastLocationMs = new AtomicLong(0);
 
     public BotWalker(final PokemonBot bot, final S2LatLng start, final LocationListener locationListener,
-                     final HeartBeatListener heartBeatListener) {
+                     final HeartBeatListener heartBeatListener, final Options options) {
         this.bot = bot;
         this.currentLocation = new AtomicReference<>(start);
         this.locationListener = locationListener;
         this.heartBeatListener = heartBeatListener;
+        this.options = options;
+        SPEED = options.getMaxWalkingSpeed();
     }
 
     protected static long getTimeoutForDistance(double distance) {
@@ -50,8 +53,8 @@ public class BotWalker {
         heartBeatListener.heartBeat();
     }
 
-    public synchronized void walkTo(final double stepSize, final S2LatLng start, final S2LatLng end) {
-        S2LatLng[] steps = getStepsToDestination(start, end, stepSize);
+    public synchronized void walkTo(final S2LatLng start, final S2LatLng end) {
+        S2LatLng[] steps = getStepsToDestination(start, end, options.getWalkingStepDistance());
 
         if (steps == null) {
             setCurrentLocation(end);
@@ -67,8 +70,6 @@ public class BotWalker {
             try {
                 if (Double.compare(distance, SPEED) > 0) {
                     long timeout = getTimeoutForDistance(distance);
-                    System.out.println(distance);
-                    System.out.println(timeout);
                     if (timeout > 0)
                         Thread.sleep(timeout);
                 }
@@ -89,7 +90,7 @@ public class BotWalker {
     }
 
     public synchronized void runTo(final S2LatLng origin, final S2LatLng destination) {
-        S2LatLng[] steps = getStepsToDestination(origin, destination, 5);
+        S2LatLng[] steps = getStepsToDestination(origin, destination, options.getRunningStepDistance());
         setCurrentLocation(origin);
         if (steps == null) {
             setCurrentLocation(destination);
@@ -101,8 +102,7 @@ public class BotWalker {
         }
         for (int i = steps.length - 1; i >= 0; i--) {
             double speed = setCurrentLocation(steps[i]);
-            bot.setCurrentLocation(steps[i]);
-            sleep(10);
+            sleep(10); //TODO make random
         }
 
         longSleep();
@@ -123,6 +123,7 @@ public class BotWalker {
                 locationListener.updateCurrentLocation(newLocation);
             lastLocationMs.set(System.currentTimeMillis());
             currentLocation.set(newLocation);
+            bot.setCurrentLocation(newLocation);
             return speed;
         } catch (Exception e) {
             e.printStackTrace();
@@ -140,7 +141,6 @@ public class BotWalker {
             return new S2LatLng[]{start};
         double deltaLat = end.latDegrees() - start.latDegrees();
         double deltaLng = end.lngDegrees() - start.lngDegrees();
-        S2LatLng difference = end.sub(start);
         double distance = start.getEarthDistance(end);
         final int stepsRequired = (int) Math.round(distance / stepMeters);
 
@@ -173,10 +173,6 @@ public class BotWalker {
 
     public final synchronized long getLastLocationMs() {
         return lastLocationMs.get();
-    }
-
-    protected final synchronized void setLastLocationMs(long ms) {
-        lastLocationMs.set(ms);
     }
 
     protected boolean longSleep() {

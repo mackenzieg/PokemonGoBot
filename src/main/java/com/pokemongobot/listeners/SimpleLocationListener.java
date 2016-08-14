@@ -14,7 +14,8 @@ public class SimpleLocationListener implements LocationListener {
 
     @Override
     public void updateCurrentLocation(S2LatLng point) {
-        CatchPokemon.catchPokemon(bot.getCatchablePokemon());
+        if (bot.getOptions().isCatchPokemon())
+            CatchPokemon.catchPokemon(bot.getCatchablePokemon());
     }
 
     @Override

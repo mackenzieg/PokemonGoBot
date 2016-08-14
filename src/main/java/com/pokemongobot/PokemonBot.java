@@ -11,9 +11,9 @@ import java.util.List;
 
 public interface PokemonBot {
 
-    void setWalker(BotWalker botWalker);
-
     BotWalker getWalker();
+
+    void setWalker(BotWalker botWalker);
 
     S2LatLng getCurrentLocation();
 
@@ -30,5 +30,7 @@ public interface PokemonBot {
     void wander();
 
     boolean fixSoftBan(S2LatLng destination);
+
+    Options getOptions();
 
 }

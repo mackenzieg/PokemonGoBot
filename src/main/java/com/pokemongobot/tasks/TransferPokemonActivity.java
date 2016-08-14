@@ -2,6 +2,7 @@ package com.pokemongobot.tasks;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
 import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokemongobot.Options;
 import com.pokemongobot.PokemonBot;
 
 import java.util.ArrayList;
@@ -10,13 +11,11 @@ import java.util.List;
 public class TransferPokemonActivity implements BotActivity {
 
     private final PokemonBot bot;
-    private double iv;
-    private double cp;
+    private final Options options;
 
-    public TransferPokemonActivity(PokemonBot bot, double iv, double cp) {
+    public TransferPokemonActivity(PokemonBot bot, Options options) {
         this.bot = bot;
-        this.iv = iv;
-        this.cp = cp;
+        this.options = options;
     }
 
     @Override
@@ -30,7 +29,7 @@ public class TransferPokemonActivity implements BotActivity {
         if (pokemons.size() > 0) {
             pokemons.forEach(p -> {
                 if (!p.isFavorite()) {
-                    if ((iv == -1 ? p.getCp() : p.getIvRatio()) < (iv == -1 ? cp : iv)) {
+                    if (options.isIvOverCp() ? (p.getIvRatio() < options.getIv()) : (p.getCp() < options.getCp())) {
                         try {
                             Result result = p.transferPokemon();
                             transferred.add(result);

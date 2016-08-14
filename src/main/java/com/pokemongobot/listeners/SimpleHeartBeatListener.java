@@ -1,5 +1,6 @@
 package com.pokemongobot.listeners;
 
+import com.pokemongobot.PokemonBot;
 import com.pokemongobot.tasks.BotActivity;
 
 import java.util.ArrayList;
@@ -10,12 +11,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class SimpleHeartBeatListener implements HeartBeatListener {
 
     private final AtomicInteger heartBeatCount = new AtomicInteger(0);
-    private List<BotActivity> activities = new ArrayList<>();
     private final int heartbeatPace;
     private final AtomicLong lastPulse = new AtomicLong(0);
+    private final PokemonBot bot;
+    private List<BotActivity> activities = new ArrayList<>();
 
-    public SimpleHeartBeatListener(int pace) {
+    public SimpleHeartBeatListener(int pace, PokemonBot bot) {
         this.heartbeatPace = pace;
+        this.bot = bot;
     }
 
 

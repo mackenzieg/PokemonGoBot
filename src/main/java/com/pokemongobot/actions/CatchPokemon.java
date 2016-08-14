@@ -26,12 +26,8 @@ public class CatchPokemon {
         if (encounterResult == null || !encounterResult.wasSuccessful())
             return null;
         try {
-            int probability = encounterResult.getCaptureProbability().getCaptureProbabilityCount();
+            int probability = encounterResult.getCaptureProbability().getCaptureProbabilityCount(); //TODO calculate which ball to use also add config for this
             CatchResult catchResult;
-            /*if (probability <= Config.getCatchChanceUseRazzberry())
-                catchResult = pokemon.catchPokemonWithRazzBerry();
-            else
-                catchResult = pokemon.catchPokemon();*/
             catchResult = pokemon.catchPokemon();
             CatchStatus catchStatus = catchResult.getStatus();
             while (catchStatus == CatchStatus.CATCH_MISSED) {

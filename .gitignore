@@ -156,5 +156,4 @@ PokemonGoBot.iml
 .idea/misc.xml
 src/main/resources/
 src/test/
-config.yml.example
-/PokeGOAPI-library-all-0.4.0.jar
+config.json
