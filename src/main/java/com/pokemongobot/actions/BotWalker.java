@@ -6,6 +6,7 @@ import com.pokemongobot.PokemonBot;
 import com.pokemongobot.listeners.HeartBeatListener;
 import com.pokemongobot.listeners.LocationListener;
 import com.pokemongobot.tasks.BotActivity;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class BotWalker {
 
     private static double SPEED;
+    private final Logger logger;
     private final HeartBeatListener heartBeatListener;
     private final List<BotActivity> postStepActivities = new ArrayList<>();
     private final LocationListener locationListener;
@@ -31,6 +33,7 @@ public class BotWalker {
         this.heartBeatListener = heartBeatListener;
         this.options = options;
         SPEED = options.getMaxWalkingSpeed();
+        logger = Logger.getLogger(Thread.currentThread().getName());
     }
 
     protected static long getTimeoutForDistance(double distance) {
@@ -80,7 +83,7 @@ public class BotWalker {
             performHeartBeat();
             if (!Double.isNaN(speed) && !Double.isInfinite(speed)
                     && (Double.compare(speed, SPEED) > 0)) {
-                System.out.println("Walking too fast, slowing down");
+                logger.debug("Walking too fast, slowing down");
                 longSleep();
             }
         }
@@ -126,7 +129,7 @@ public class BotWalker {
             bot.setCurrentLocation(newLocation);
             return speed;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error setting current location", e);
         }
         return 0;
     }
@@ -184,6 +187,7 @@ public class BotWalker {
             Thread.sleep(wait);
             return true;
         } catch (InterruptedException ignore) {
+            logger.error("Error pausing thread", ignore);
             return false;
         }
     }

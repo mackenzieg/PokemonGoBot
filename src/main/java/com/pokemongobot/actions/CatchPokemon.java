@@ -5,24 +5,25 @@ import com.pokegoapi.api.map.pokemon.CatchResult;
 import com.pokegoapi.api.map.pokemon.CatchablePokemon;
 import com.pokegoapi.api.map.pokemon.encounter.EncounterResult;
 import com.pokegoapi.exceptions.*;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CatchPokemon {
 
-    public static List<CatchResult> catchPokemon(List<CatchablePokemon> pokemonList) {
+    public static List<CatchResult> catchPokemon(Logger logger, List<CatchablePokemon> pokemonList) {
         List<CatchResult> results = new ArrayList<>(pokemonList.size());
         pokemonList.forEach(pokemon -> {
-            CatchResult result = attemptCatch(pokemon);
+            CatchResult result = attemptCatch(logger, pokemon);
             if (result != null && !result.isFailed())
                 results.add(result);
         });
         return results;
     }
 
-    public static CatchResult attemptCatch(CatchablePokemon pokemon) {
-        EncounterResult encounterResult = encounterResult(pokemon);
+    public static CatchResult attemptCatch(Logger logger, CatchablePokemon pokemon) {
+        EncounterResult encounterResult = encounterResult(logger, pokemon);
         if (encounterResult == null || !encounterResult.wasSuccessful())
             return null;
         try {
@@ -53,7 +54,7 @@ public class CatchPokemon {
 
     }
 
-    public static EncounterResult encounterResult(CatchablePokemon pokemon) {
+    public static EncounterResult encounterResult(Logger logger, CatchablePokemon pokemon) {
         try {
             return pokemon.encounterPokemon();
         } catch (Exception e) {

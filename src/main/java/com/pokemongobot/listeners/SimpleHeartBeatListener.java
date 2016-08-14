@@ -2,6 +2,7 @@ package com.pokemongobot.listeners;
 
 import com.pokemongobot.PokemonBot;
 import com.pokemongobot.tasks.BotActivity;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class SimpleHeartBeatListener implements HeartBeatListener {
 
+    private final Logger logger;
     private final AtomicInteger heartBeatCount = new AtomicInteger(0);
     private final int heartbeatPace;
     private final AtomicLong lastPulse = new AtomicLong(0);
@@ -19,6 +21,7 @@ public class SimpleHeartBeatListener implements HeartBeatListener {
     public SimpleHeartBeatListener(int pace, PokemonBot bot) {
         this.heartbeatPace = pace;
         this.bot = bot;
+        this.logger = Logger.getLogger(Thread.currentThread().getName());
     }
 
 

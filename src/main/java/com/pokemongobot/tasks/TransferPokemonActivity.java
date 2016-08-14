@@ -4,18 +4,21 @@ import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleaseP
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokemongobot.Options;
 import com.pokemongobot.PokemonBot;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransferPokemonActivity implements BotActivity {
 
+    private final Logger logger;
     private final PokemonBot bot;
     private final Options options;
 
     public TransferPokemonActivity(PokemonBot bot, Options options) {
         this.bot = bot;
         this.options = options;
+        this.logger = Logger.getLogger(options.getName());
     }
 
     @Override
@@ -48,15 +51,12 @@ public class TransferPokemonActivity implements BotActivity {
                             Result result = p.transferPokemon();
                             transferred.add(result);
                         } catch (Exception e) {
-                            //TODO Log
-                            ;
+                            logger.error("Error transfering pokemon", e);
                         }
-                        }
-
+                    }
                 }
             });
         }
-
         return transferred;
     }
 

@@ -21,6 +21,7 @@ public class BotRunner extends Thread {
             SimplePokemonBot simplePokemonBot = new SimplePokemonBot(pokemonGo, this.options);
             simplePokemonBot.wander();
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Error Starting " + this.getName(), e);
         }
     }
