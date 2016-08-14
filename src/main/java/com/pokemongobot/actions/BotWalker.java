@@ -129,7 +129,7 @@ public class BotWalker {
             bot.setCurrentLocation(newLocation);
             return speed;
         } catch (Exception e) {
-            logger.error("Error setting current location", e);
+            logger.debug("Error setting current location", e);
         }
         return 0;
     }
@@ -187,7 +187,7 @@ public class BotWalker {
             Thread.sleep(wait);
             return true;
         } catch (InterruptedException ignore) {
-            logger.error("Error pausing thread", ignore);
+            logger.debug("Error pausing thread", ignore);
             return false;
         }
     }

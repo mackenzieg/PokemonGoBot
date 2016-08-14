@@ -19,10 +19,10 @@ public class BotRunner extends Thread {
             logger = Logger.getLogger(options.getName());
             PokemonGo pokemonGo = Main.buildPokemonGo(this.options);
             SimplePokemonBot simplePokemonBot = new SimplePokemonBot(pokemonGo, this.options);
+            Thread.sleep(500);
             simplePokemonBot.wander();
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Error Starting " + this.getName(), e);
+            logger.debug("Error Starting " + this.getName(), e);
         }
     }
 

@@ -73,7 +73,7 @@ public class HatchEgg {
         try {
             return incubator.hatchEgg(egg);
         } catch (AsyncPokemonGoException | LoginFailedException | RemoteServerException e) {
-            logger.error("Failed hatching egg", e);
+            logger.debug("Failed hatching egg", e);
         }
         return null;
     }

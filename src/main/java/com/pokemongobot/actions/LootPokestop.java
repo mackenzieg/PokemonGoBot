@@ -24,15 +24,14 @@ public class LootPokestop {
             if (pokestop.canLoot()) {
                 PokestopLootResult pokestopLootResult = pokestop.loot();
                 if (pokestopLootResult.wasSuccessful()) {
-                    //TODO add log
-                    System.out.println("Looted Pokestop " + pokestop.getDetails().getName());
+                    logger.info("Looted pokestop " + pokestop.getDetails().getName());
                 } else {
-                    System.out.println("Failed looting pokestop reason: " + pokestopLootResult.getResult().name());
+                    logger.info("Failed looting pokestops reason " + pokestopLootResult.getResult().name());
                 }
                 return pokestopLootResult;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug("Error looting pokestop", e);
         }
         return null;
     }

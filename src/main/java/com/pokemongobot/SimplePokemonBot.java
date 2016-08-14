@@ -38,7 +38,6 @@ public class SimplePokemonBot implements PokemonBot {
     private State state;
     private BotWalker botWalker;
     private State currentOperation = State.NAN;
-    private State lastOperation = State.NAN;
 
     private Options options;
 
@@ -76,9 +75,6 @@ public class SimplePokemonBot implements PokemonBot {
             try {
                 List<Pokestop> pokestops = getNearbyPokestops();
                 logger.info("Found " + pokestops.size() + " Pokestops nearby");
-                if (pokestops.size() < 1) {
-                    break;
-                }
 
                 catchNearbyPokemon();
 
@@ -98,7 +94,7 @@ public class SimplePokemonBot implements PokemonBot {
                             logger.info("Walking to " + p.getDetails().getName() + " "
                                     + this.getCurrentLocation().getEarthDistance(S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude())) + "m away");
                         } catch (AsyncPokemonGoException | RemoteServerException | LoginFailedException e) {
-                            e.printStackTrace();
+                            logger.debug(e);
                         }
                         botWalker.runTo(getCurrentLocation(), S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()));
                         this.setCurrentLocation(S2LatLng.fromDegrees(p.getLatitude(), p.getLongitude()));
@@ -122,7 +118,7 @@ public class SimplePokemonBot implements PokemonBot {
                     //TODO just add miles to eggs
                 }
             } catch (Exception e) {
-                logger.error("Error looping bot", e);
+                logger.debug("Error looping bot", e);
             }
         }
     }
@@ -164,7 +160,7 @@ public class SimplePokemonBot implements PokemonBot {
                 if (d != null) {
                     logger.info("Attempted spin number " + i);
                 } else {
-                    logger.error("Error getting pokestop");
+                    logger.debug("Error getting pokestop");
                 }
 
                 PokestopLootResult r = pokestop.loot();
@@ -251,7 +247,7 @@ public class SimplePokemonBot implements PokemonBot {
                 )
                 .collect(Collectors.toList());
 
-        return EvolvePokemon.evolvePokemon(pokemons, candyJar);
+        return EvolvePokemon.evolvePokemon(logger, pokemons, candyJar);
     }
 
     public void manageEggs() {
@@ -271,7 +267,7 @@ public class SimplePokemonBot implements PokemonBot {
                 try {
                     return incubator1.isInUse();
                 } catch (LoginFailedException | RemoteServerException e) {
-                    logger.error("Error checking if incubator in use", e);
+                    logger.debug("Error checking if incubator in use", e);
                 }
                 return true;
             }).forEach(incubator -> {
@@ -279,7 +275,7 @@ public class SimplePokemonBot implements PokemonBot {
             });
 
         } catch (AsyncPokemonGoException e) {
-            logger.error("Error managing eggs", e);
+            logger.debug("Error managing eggs", e);
         }
     }
 
@@ -288,19 +284,19 @@ public class SimplePokemonBot implements PokemonBot {
         try {
             return getApi().getInventories();
         } catch (AsyncPokemonGoException | LoginFailedException | RemoteServerException e) {
-            logger.error("Error getting inventory", e);
+            logger.debug("Error getting inventory", e);
         }
         return null;
     }
 
     protected synchronized final State updateOpStatus(State status) {
-        this.lastOperation = this.currentOperation;
+        State lastOperation = this.currentOperation;
         this.currentOperation = status;
 
         if (lastOperation != currentOperation)
-            logger.debug("Switching from " + this.lastOperation + " to " + this.currentOperation);
+            logger.debug("Switching from " + lastOperation + " to " + this.currentOperation);
 
-        return this.lastOperation;
+        return lastOperation;
     }
 
     @Override
@@ -322,7 +318,7 @@ public class SimplePokemonBot implements PokemonBot {
         try {
             return getMap().getMapObjects().getPokestops();
         } catch (AsyncPokemonGoException | RemoteServerException | LoginFailedException e) {
-            logger.error("Error getting pokestops", e);
+            logger.debug("Error getting pokestops", e);
         }
 
         return new ArrayList<>();

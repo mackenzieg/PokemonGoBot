@@ -51,7 +51,7 @@ public class TransferPokemonActivity implements BotActivity {
                             Result result = p.transferPokemon();
                             transferred.add(result);
                         } catch (Exception e) {
-                            logger.error("Error transfering pokemon", e);
+                            logger.debug("Error transfering pokemon", e);
                         }
                     }
                 }

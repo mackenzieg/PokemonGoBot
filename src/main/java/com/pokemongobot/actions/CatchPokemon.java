@@ -37,18 +37,15 @@ public class CatchPokemon {
             }
             switch (catchResult.getStatus()) {
                 case CATCH_SUCCESS:
-                    //TODO Log
-                    System.out.println("Caught pokemon " + pokemon.getPokemonId().name());
+                    logger.info("Caught pokemon " + pokemon.getPokemonId().name());
                     break;
                 default:
-                    //TODO Log
-                    System.out.println("" + pokemon.getPokemonId().name() + " got away reason " + catchResult.getStatus().toString());
+                    logger.info("" + pokemon.getPokemonId().name() + "got away reason " + catchResult.getStatus().toString());
                     break;
             }
             return catchResult;
         } catch (AsyncPokemonGoException | RemoteServerException | EncounterFailedException | LoginFailedException | NoSuchItemException e) {
-            System.out.println("Error");
-            //TODO log error
+            logger.debug("Error trying to catch pokemon", e);
         }
         return null;
 
@@ -58,7 +55,7 @@ public class CatchPokemon {
         try {
             return pokemon.encounterPokemon();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug("Encounter error", e);
         }
         return null;
     }

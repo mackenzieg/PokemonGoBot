@@ -35,11 +35,12 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
         AnsiConsole.systemInstall();
         System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Starting bot in 5..."));
         System.out.println(Ansi.ansi().fg(Ansi.Color.RED).a("Change location now before start!"));
         Thread.sleep(5000);
+
         new Main();
     }
 
