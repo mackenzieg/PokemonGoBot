@@ -121,7 +121,7 @@ public class SimplePokemonBot implements PokemonBot {
                     }
                 } else if (options.isCatchPokemon()) {
                     //TODO add bot that will go towards possible pokemon spawn location
-                } else {
+                } else if (options.isManageEggs()) {
                     //TODO just add miles to eggs
                 }
             } catch (Exception e) {

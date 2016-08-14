@@ -22,6 +22,7 @@ public class Options {
 
     private boolean catchPokemon;
     private boolean lootPokestops;
+    private boolean manageEggs;
     private boolean evolve;
     private List<String> keepUnevolved;
 
@@ -34,6 +35,14 @@ public class Options {
 
     public Options() {
 
+    }
+
+    public boolean isManageEggs() {
+        return manageEggs;
+    }
+
+    public void setManageEggs(boolean manageEggs) {
+        this.manageEggs = manageEggs;
     }
 
     public boolean isIvOverCp() {

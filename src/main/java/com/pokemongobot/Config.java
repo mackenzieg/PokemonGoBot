@@ -12,7 +12,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 public class Config {
 
@@ -72,6 +74,7 @@ public class Config {
             JSONObject farming = (JSONObject) jsonObject.get("farming");
             option.setCatchPokemon(farming.getBoolean("catch_pokemon"));
             option.setCatchPokemon(farming.getBoolean("loot_pokestops"));
+            option.setManageEggs(farming.getBoolean("manage_eggs"));
 
             JSONObject evolve = (JSONObject) farming.get("evolve_pokemon");
             option.setEvolve(evolve.getBoolean("evolve"));
@@ -85,8 +88,8 @@ public class Config {
             JSONObject transfer = (JSONObject) jsonObject.get("transfer_pokemon");
             option.setTransferPokemon(transfer.getBoolean("transfer"));
             option.setIvOverCp(transfer.getBoolean("iv_over_cp"));
-            option.setIv(transfer.getInt("iv"));
-            option.setCp(transfer.getInt("cp"));
+            option.setIv(transfer.getInt("threshold_iv"));
+            option.setCp(transfer.getInt("treshold_cp"));
 
             JSONArray obligatory = (JSONArray) transfer.get("obligatory");
             List<String> ob = new ArrayList<>(obligatory.length());
@@ -106,7 +109,7 @@ public class Config {
 
         }
 
-        return null;
+        return options;
     }
 
     private List<JSONObject> readJson(File file) {
@@ -131,10 +134,19 @@ public class Config {
         List<JSONObject> jsonObjects = null;
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
-            JSONArray jsonArray = (JSONArray) jsonObject.get("bots");
-            jsonObjects = new ArrayList<>(jsonArray.length());
-            for (int i = 0; i < jsonArray.length(); i++) {
-                jsonObjects.add((JSONObject) jsonArray.get(1));
+            JSONObject bots = (JSONObject) jsonObject.get("bots");
+            Iterator iterator = bots.sortedKeys();
+            Stack<String> paths = new Stack<>();
+            while (iterator.hasNext()) {
+                String botPath = (String) iterator.next();
+                if (!botPath.contains("comment")) {
+                    System.out.println("Loading bot with name: " + botPath);
+                    paths.add(botPath);
+                }
+            }
+            jsonObjects = new ArrayList<>(paths.size());
+            for (String path : paths) {
+                jsonObjects.add((JSONObject) bots.get(path));
             }
         } catch (Exception e) {
             e.printStackTrace();

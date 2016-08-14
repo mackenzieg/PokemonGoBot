@@ -4,20 +4,20 @@
     "BotOne": {
       "proxy_comment": "proxy to use leave, ip, port, user, password blank to not use proxy",
       "proxy": {
-        "ip": "192.168.2.1",
-        "port": "8080",
+        "ip": "",
+        "port": "",
         "login_comment": "leave user, password blank if proxy doesn't require authentication",
-        "user": "trump",
-        "password": "build_it_tall"
+        "user": "",
+        "password": ""
       },
       "google_description": "google login, replace with ptc for ptc login",
-      "google": {
-        "username": "example_username",
-        "password": "example_password"
+      "ptc": {
+        "username": "LordBottery",
+        "password": ""
       },
       "location": {
-        "latitude": "80",
-        "longitude": "100",
+        "latitude": "40.7127837",
+        "longitude": "4.00594130000002",
         "walking_step_distance_comment": "how long a step is in meters, 1 is a good number",
         "walking_step_distance": "1",
         "max_speed_walking_comment": "max walking speed in meters per second",
@@ -28,9 +28,12 @@
         "time_reset_comment": "time until bot resets to start location in seconds, set to -1 to ignore",
         "time_reset": "240"
       },
+      "farming_comment": "bot objectives can be set here. example: catch_pokemon: false, loot_pokestops: false, manage_eggs: true, bot will just walk around to incubate egg",
       "farming": {
         "catch_pokemon": "true",
         "loot_pokestops": "true",
+        "manage_eggs_comment": "automatically incubate eggs etc",
+        "manage_eggs": "true",
         "evolve_pokemon": {
           "evolve": "true",
           "keep_unevolved_comment": "add pokemon names you don't want evolved. list of names in pokemon_names.txt",
@@ -38,27 +41,27 @@
             "ABRA",
             "KADABRA"
           ]
-        },
-        "transfer_pokemon": {
-          "transfer": "true",
-          "iv_over_cp_comment": "treat iv as more important than cp",
-          "iv_over_cp": "false",
-          "threshold_comment": "minimum iv, cp to keep pokemon",
-          "threshold_iv": "80",
-          "treshold_cp": "400",
-          "obligatory_comment": "transfer regardless of cp, iv",
-          "obligatory": [
-            "DODUO",
-            "RATTATA",
-            "CATERPIE",
-            "PIDGEY"
-          ],
-          "protect_comment": "add pokemon names you don't want to transfer. list of names in pokemon_names.txt",
-          "protect": [
-            "EEVEE",
-            "MEWTWO"
-          ]
         }
+      },
+      "transfer_pokemon": {
+        "transfer": "true",
+        "iv_over_cp_comment": "treat iv as more important than cp",
+        "iv_over_cp": "false",
+        "threshold_comment": "minimum iv, cp to keep pokemon",
+        "threshold_iv": "80",
+        "treshold_cp": "400",
+        "obligatory_comment": "transfer regardless of cp, iv",
+        "obligatory": [
+          "DODUO",
+          "RATTATA",
+          "CATERPIE",
+          "PIDGEY"
+        ],
+        "protect_comment": "add pokemon names you don't want to transfer. list of names in pokemon_names.txt",
+        "protect": [
+          "EEVEE",
+          "MEWTWO"
+        ]
       }
     }
   }
